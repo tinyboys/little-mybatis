@@ -1,2 +1,3 @@
 # Project exclude paths
 /litter-mybtais-01/target/
+.idea
