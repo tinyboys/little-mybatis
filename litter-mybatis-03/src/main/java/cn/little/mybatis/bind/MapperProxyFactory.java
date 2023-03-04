@@ -2,11 +2,15 @@ package cn.little.mybatis.bind;
 
 import cn.little.mybatis.session.SqlSession;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MapperProxyFactory <T>{
 
     private final Class<T> mapperInterface;
+    private Map<Method, MapperMethod> methodCache = new ConcurrentHashMap<Method, MapperMethod>();
 
 
     public MapperProxyFactory(Class<T> mapperInterface) {
@@ -21,7 +25,7 @@ public class MapperProxyFactory <T>{
      */
     @SuppressWarnings("unchecked")
     public T newInstace(SqlSession sqlSession) {
-        final MapperProxy<T> tMapperProxy =new MapperProxy<>(sqlSession, mapperInterface);
+        final MapperProxy<T> tMapperProxy =new MapperProxy<>(sqlSession, mapperInterface,methodCache);
         return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[]{mapperInterface}, tMapperProxy);
     }
 

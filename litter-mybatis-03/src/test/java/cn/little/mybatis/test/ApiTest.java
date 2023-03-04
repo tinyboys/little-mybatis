@@ -23,19 +23,6 @@ public class ApiTest {
     @Test
     public void test_MapperProxyFactory(){
 
-        // 1.注册Mapper
-        MapperRegistry registry = new MapperRegistry();
-        registry.addMappers("cn.little.mybatis.test.dao");
-
-        // 2. 从SqlSession 工厂获取Session
-        SqlSessionFactory sqlSessionFactory=new DefaultSqlSessionFactory(registry);
-        SqlSession sqlSession = sqlSessionFactory.openSession();
-
-        //3. 获取映射器对象
-        IUserDao mapper = sqlSession.getMapper(IUserDao.class);
-
-        String res = mapper.queryUserName("0001");
-        logger.info("测试结果：{}", res);
 
     }
 }
