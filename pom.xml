@@ -12,6 +12,7 @@
         <module>litter-mybtais-01</module>
         <module>litter-mybtais-02</module>
         <module>litter-mybatis-03</module>
+        <module>litter-mybatis-04</module>
     </modules>
 
     <properties>
