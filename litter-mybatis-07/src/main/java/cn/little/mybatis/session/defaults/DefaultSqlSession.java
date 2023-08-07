@@ -1,7 +1,6 @@
 package cn.little.mybatis.session.defaults;
 
 import cn.little.mybatis.bind.MapperRegistry;
-import cn.little.mybatis.executor.Executor;
 import cn.little.mybatis.mapping.BoundSql;
 import cn.little.mybatis.mapping.Environment;
 import cn.little.mybatis.mapping.MappedStatement;
@@ -17,12 +16,9 @@ public class DefaultSqlSession implements SqlSession {
 
     private Configuration configuration;
 
-    private Executor executor;
 
-
-    public DefaultSqlSession(Configuration configuration,Executor executor) {
+    public DefaultSqlSession(Configuration configuration) {
         this.configuration = configuration;
-        this.executor=executor;
     }
 
     @Override
@@ -34,8 +30,14 @@ public class DefaultSqlSession implements SqlSession {
     public <T> T selectOne(String statement, Object parameter) {
         try {
             MappedStatement mappedStatement = configuration.getMappedStatement(statement);
-            List<T> query = executor.query(mappedStatement, parameter, Executor.NO_RESULT_HANDLER, mappedStatement.getBoundSql());
-            return query.get(0);
+            Environment environment = configuration.getEnvironment();
+            Connection connection = environment.getDataSource().getConnection();
+            BoundSql boundSql = mappedStatement.getBoundSql();
+            PreparedStatement preparedStatement = connection.prepareStatement(boundSql.getSql());
+            preparedStatement.setLong(1, Long.parseLong(((Object[]) parameter)[0].toString()));
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<T> objList = resultSet2Obj(resultSet, Class.forName(boundSql.getResultType()));
+            return objList.get(0);
         }catch (Exception exception){
             exception.printStackTrace();
             return null;
